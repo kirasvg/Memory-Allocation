@@ -19,16 +19,18 @@ public class A2DynamicMem extends A1DynamicMem {
         }
         Dictionary d = freeBlk.Find(blockSize,false);
         if (d!=null){
+            int address= d.address;
+            int size =d.size;
             if (d.key==blockSize) {
                 freeBlk.Delete(d);
-                allocBlk.Insert(d.address,blockSize,d.address);
-                return d.address;
+                allocBlk.Insert(address,blockSize,address);
+                return address;
             }
             else {
                 freeBlk.Delete(d);
-                freeBlk.Insert(d.address+blockSize,d.size-blockSize,d.size-blockSize);
-                allocBlk.Insert(d.address,blockSize,d.address);
-                return d.address;
+                freeBlk.Insert(address+blockSize,size-blockSize,size-blockSize);
+                allocBlk.Insert(address,blockSize,address);
+                return address;
             }
         }
         else {
@@ -36,38 +38,79 @@ public class A2DynamicMem extends A1DynamicMem {
         }
     }
     public void Defragment() {
-        BSTree t = new BSTree();
-        Dictionary d = freeBlk.getFirst();
-        if (d == null) {
-            return;
-        }
-        while (d != null) {
-            t.Insert(d.address, d.size, d.address);
-            d = d.getNext();
-        }
-        Dictionary s = t.getFirst();
-        Dictionary y = s.getNext();
-        while (y != null) {
-            if ((s.address + s.size) == y.address) {
-                Dictionary u=new BSTree(s.address,s.size,s.size);
-                Dictionary i =new BSTree(y.address,y.size,y.size);
-                t.Delete(s);
-                freeBlk.Delete(u);
-                t.Delete(y);
-                freeBlk.Delete(i);
-                t.Insert(s.address, s.size + y.size, s.address);
-                freeBlk.Insert(s.address, s.size + y.size, s.size + y.size);
-                s = t.getFirst();
-                y = s.getNext();
-            } else {
-                s = s.getNext();
-                y = y.getNext();
+        if(type==2) {
+            BSTree t = new BSTree();
+            Dictionary d = freeBlk.getFirst();
+            if (d == null) {
+                return;
             }
-            t= null;
-            return;
+            while (d != null) {
+                t.Insert(d.address, d.size, d.address);
+                d = d.getNext();
+            }
+            Dictionary s = t.getFirst();
+            Dictionary y = s.getNext();
+            while (y != null) {
+                if ((s.address + s.size) == y.address) {
+                    Dictionary u=new BSTree(s.address,s.size,s.size);
+                    Dictionary i =new BSTree(y.address,y.size,y.size);
+                    int sa= s.address;
+                    int ss= s.size;
+                    int ya=y.address;
+                    int ys=y.size;
+                    t.Delete(s);
+                    freeBlk.Delete(u);
+                    t.Delete(y);
+                    freeBlk.Delete(i);
+                    t.Insert(sa, ss+ ys, sa);
+                    freeBlk.Insert(sa, ss + ys, ss + ys);
+                    s = t.getFirst();
+                    y = s.getNext();
+                } else {
+                    s = s.getNext();
+                    y = y.getNext();
+                }
+                t= null;
+                return;
+            }
+        }
+        else if(type==3){
+            AVLTree t = new AVLTree();
+            Dictionary d = freeBlk.getFirst();
+            if (d == null) {
+                return;
+            }
+            while (d != null) {
+                t.Insert(d.address, d.size, d.address);
+                d = d.getNext();
+            }
+            Dictionary s = t.getFirst();
+            Dictionary y = s.getNext();
+            while (y != null) {
+                if ((s.address + s.size) == y.address) {
+                    Dictionary u=new BSTree(s.address,s.size,s.size);
+                    Dictionary i =new BSTree(y.address,y.size,y.size);
+                    int sa= s.address;
+                    int ss= s.size;
+                    int ya=y.address;
+                    int ys=y.size;
+                    t.Delete(s);
+                    freeBlk.Delete(u);
+                    t.Delete(y);
+                    freeBlk.Delete(i);
+                    t.Insert(sa, ss+ ys, sa);
+                    freeBlk.Insert(sa, ss + ys, ss + ys);
+                    s = t.getFirst();
+                    y = s.getNext();
+                } else {
+                    s = s.getNext();
+                    y = y.getNext();
+                }
+                t= null;
+                return;
+            }
         }
     }
 }
-
 
 
